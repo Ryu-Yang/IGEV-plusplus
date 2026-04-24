@@ -35,12 +35,23 @@ You can switch to your own test data directory, or place your own pairs of test 
 * python 3.8
 
 ### Create a virtual environment and activate it.
+```
+uv venv -p 3.12
+source .venv/bin/activate
+```
+
+or
 
 ```Shell
 conda create -n IGEV_plusplus python=3.8
 conda activate IGEV_plusplus
 ```
 ### Dependencies
+
+```bash
+uv pip install torch torchvision --index-url https://download.pytorch.org/whl/cu128
+uv pip install -e .
+```
 
 ```Shell
 pip install torch==1.12.1+cu113 torchvision==0.13.1+cu113 torchaudio==0.12.1 --extra-index-url https://download.pytorch.org/whl/cu113

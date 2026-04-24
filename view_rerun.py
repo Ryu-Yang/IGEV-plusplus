@@ -31,8 +31,8 @@ class Viewer():
         """
         timestamp_seconds = timestamp_ns / 1e9
         
-        # rr.set_time("timestamp", timestamp=timestamp_seconds)
-        rr.set_time_seconds("timestamp", seconds = 0)
+        rr.set_time("timestamp", timestamp=timestamp_seconds)
+        # rr.set_time_seconds("timestamp", seconds = 0)
 
     def view_image(self, name: str, image: np.ndarray):
         """

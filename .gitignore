@@ -212,3 +212,5 @@ models/*
 
 demo_output/*
 pretrained_models/*
+
+demo-imgs/*

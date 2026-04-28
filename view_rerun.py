@@ -72,8 +72,12 @@ class Viewer():
 
         self._set_timestamp(0)
 
-        # max_depth = 10.0
-        # depth_normalized = np.clip(depth, 0, max_depth) / max_depth
+        max_depth = 5000.0
+        # depth_lim = np.clip(depth, 0, max_depth)
+
+        depth_lim = depth.copy()
+        depth_lim[depth_lim > max_depth] = 0.0
+
         # depth_colormap = cv2.applyColorMap(
         #     (depth_normalized * 255).astype(np.uint8), cv2.COLORMAP_JET
         # )
@@ -94,7 +98,7 @@ class Viewer():
         )
 
         # Log the tensor.
-        rr.log(f"{entity_path}/depth", rr.DepthImage(depth, meter=1_000.0, colormap="viridis"))
+        rr.log(f"{entity_path}/depth", rr.DepthImage(depth_lim, meter=1_000.0, colormap="viridis"))
 
 
 

@@ -9,7 +9,13 @@ import time
 
 
 try:
-    autocast = torch.cuda.amp.autocast
+    class autocast:
+        def __init__(self, enabled=True, dtype=torch.float16):
+            self.autocast = torch.amp.autocast('cuda', enabled=enabled, dtype=dtype)
+        def __enter__(self):
+            return self.autocast.__enter__()
+        def __exit__(self, *args):
+            return self.autocast.__exit__(*args)
 except:
     class autocast:
         def __init__(self, enabled):

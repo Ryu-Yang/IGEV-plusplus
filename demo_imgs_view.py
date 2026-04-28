@@ -23,40 +23,37 @@ os.environ['CUDA_VISIBLE_DEVICES'] = '0'
 
 def disparity_to_depth(disp, fx, baseline_mm, 
                        min_disp=1.0, max_disp=None, 
-                       invalid_value=0.0):
+                       invalid_value=np.nan):
     """
-    视差图 → 深度图（向量化实现，支持 numpy/tensor）
-    
-    Args:
-        disp: np.ndarray 或 torch.Tensor, 视差图 [H, W] 或 [H, W, 1], 单位: pixels
-        fx: float, 焦距（像素单位）, 从内参 K[0,0] 获取
-        baseline_mm: float, 基线距离（毫米）
-        min_disp: float, 最小有效视差（避免除零）
-        max_disp: float, 最大有效视差（可选，过滤噪声）
-        invalid_value: float, 无效区域的深度值（0 或 np.nan）
-    
-    Returns:
-        depth_mm: np.ndarray, 深度图 [H, W], 单位: mm
+    视差图 → 深度图（安全掩码版，支持 numpy/torch）
     """
-    # 1. 转 numpy + 去单维度
-    if hasattr(disp, 'cpu'):
-        disp = disp.cpu().numpy()
-    disp = np.squeeze(disp).astype(np.float32)
+    # 1. 统一转为 numpy 计算，记录原始类型
+    is_torch = type(disp).__module__ == 'torch'
+    if is_torch:
+        import torch
+        device, dtype = disp.device, disp.dtype
+        disp_np = disp.detach().cpu().numpy()
+    else:
+        disp_np = np.asarray(disp)
+        
+    disp_np = np.squeeze(disp_np).astype(np.float32)
     
-    # 2. 裁剪有效视差范围
-    disp_safe = np.clip(disp, min_disp, 
-                       max_disp if max_disp is not None else np.inf)
-    
-    # 3. 核心公式: Z = f * B / d
-    depth_mm = (fx * baseline_mm) / disp_safe
-    
-    # 4. 标记无效区域（原始视差 ≤0 或 超出范围）
-    invalid_mask = (disp <= 0)
+    # 2. 构建有效视差掩码（替代 np.clip）
+    valid_mask = (disp_np >= min_disp)
     if max_disp is not None:
-        invalid_mask |= (disp > max_disp)
-    depth_mm[invalid_mask] = invalid_value
+        valid_mask &= (disp_np <= max_disp)
+        
+    # 3. 初始化深度图（无效区域填 invalid_value）
+    depth = np.full_like(disp_np, invalid_value, dtype=np.float32)
     
-    return depth_mm
+    # 4. 仅对有效区域计算深度，避免除零/篡改
+    depth[valid_mask] = (fx * baseline_mm) / disp_np[valid_mask]
+    
+    # 5. 恢复原始类型（如需 torch 输出）
+    if is_torch:
+        depth = torch.from_numpy(depth).to(device).to(dtype)
+        
+    return depth
 
 def load_image_cv(imfile):
     img = cv2.imread(imfile, cv2.IMREAD_COLOR)  # (H, W, 3) BGR
@@ -107,7 +104,8 @@ def demo(args):
             # 参数设置（人眼立体视觉模拟）
             fx = 541.65177813              # 焦距 [pixels]，典型手机/小相机值
             baseline_mm = 60.12      # 人眼瞳距 ≈ 63mm [mm]
-
+            min_disp = 30.0
+            max_disp = 300.0 
             # 假设 disp 是你的模型输出/立体匹配结果 [H, W, 1] 或 [H, W]
             # disp = model_output  # torch.Tensor 或 np.ndarray
 
@@ -116,9 +114,8 @@ def demo(args):
                 disp=disp, 
                 fx=fx, 
                 baseline_mm=baseline_mm,
-                min_disp=1.0,        # 过滤视差<1px的远距离噪声
-                # max_disp=200.0,      # 过滤视差>200px的近距离异常（可选）
-                invalid_value=0.0    # 无效区域深度设为0
+                min_disp=min_disp,
+                max_disp=max_disp,
             )
             viewer.view_depth("left_cam_depth", depth_mm)
 
@@ -137,8 +134,8 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--restore_ckpt', help="restore checkpoint", default='./pretrained_models/igev_plusplus/sceneflow.pth')
     parser.add_argument('--save_numpy', action='store_true', help='save output as numpy arrays')
-    parser.add_argument('-l', '--left_imgs', help="path to all first (left) frames", default="./demo-imgs/*/im0.png")
-    parser.add_argument('-r', '--right_imgs', help="path to all second (right) frames", default="./demo-imgs/*/im1.png")
+    parser.add_argument('-l', '--left_imgs', help="path to all first (left) frames", default="./demo-imgs/*/im0.jpg")
+    parser.add_argument('-r', '--right_imgs', help="path to all second (right) frames", default="./demo-imgs/*/im1.jpg")
     parser.add_argument('--output_directory', help="directory to save output", default="demo_output")
     parser.add_argument('--mixed_precision', action='store_true', default=True, help='use mixed precision')
     parser.add_argument('--precision_dtype', default='float32', choices=['float16', 'bfloat16', 'float32'], help='Choose precision type: float16 or bfloat16 or float32')

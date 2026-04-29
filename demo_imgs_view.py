@@ -98,16 +98,18 @@ def demo(args):
             file_stem = imfile1.split('/')[-2]
             filename = os.path.join(output_directory, f'{file_stem}.png')
             disp = disp.cpu().numpy().squeeze()
-            viewer.view_depth("left_cam_disp", disp)
+            
 
             # ==================== 使用示例 ====================
             # 参数设置（人眼立体视觉模拟）
-            fx = 541.65177813              # 焦距 [pixels]，典型手机/小相机值
+            fx = 655.7244              # 焦距 [pixels]，典型手机/小相机值
             baseline_mm = 60.12      # 人眼瞳距 ≈ 63mm [mm]
             min_disp = 30.0
-            max_disp = 300.0 
+            max_disp = 400.0 
             # 假设 disp 是你的模型输出/立体匹配结果 [H, W, 1] 或 [H, W]
             # disp = model_output  # torch.Tensor 或 np.ndarray
+
+            viewer.view_depth("left_cam_disp", disp, fx)
 
             # 计算深度（单位：mm）
             depth_mm = disparity_to_depth(
@@ -117,7 +119,7 @@ def demo(args):
                 min_disp=min_disp,
                 max_disp=max_disp,
             )
-            viewer.view_depth("left_cam_depth", depth_mm)
+            viewer.view_depth("left_cam_depth", depth_mm, fx)
 
             plt.imsave(filename, disp.squeeze(), cmap='jet')
             

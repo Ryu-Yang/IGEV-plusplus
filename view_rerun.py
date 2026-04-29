@@ -60,7 +60,7 @@ class Viewer():
             rr.Image(image)
         )
 
-    def view_depth(self, name: str, depth: np.ndarray):
+    def view_depth(self, name: str, depth: np.ndarray, fx):
         """
         显示深度图
         
@@ -76,7 +76,7 @@ class Viewer():
         # depth_lim = np.clip(depth, 0, max_depth)
 
         depth_lim = depth.copy()
-        depth_lim[depth_lim > max_depth] = 0.0
+        depth_lim[depth_lim > max_depth] = np.nan
 
         # depth_colormap = cv2.applyColorMap(
         #     (depth_normalized * 255).astype(np.uint8), cv2.COLORMAP_JET
@@ -93,7 +93,7 @@ class Viewer():
             rr.Pinhole(
                 width=depth.shape[1],
                 height=depth.shape[0],
-                focal_length=500,
+                focal_length=fx,
             ),
         )
 

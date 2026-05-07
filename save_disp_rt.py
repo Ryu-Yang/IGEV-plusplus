@@ -1,14 +1,11 @@
-import sys
-sys.path.append('core_rt')
-
 import argparse
 import glob
 import numpy as np
 import torch
 from tqdm import tqdm
 from pathlib import Path
-from core_rt.rt_igev_stereo import IGEVStereo
-from core_rt.utils.utils import InputPadder
+from igev_plusplus.core_rt.rt_igev_stereo import IGEVStereo
+from igev_plusplus.core_rt.utils.utils import InputPadder
 from PIL import Image
 from matplotlib import pyplot as plt
 import os

@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from core.submodule import *
+from igev_plusplus.core_rt.submodule import *
 import timm
 
 
@@ -203,6 +203,9 @@ class MultiBasicEncoder(nn.Module):
         self.norm_fn = norm_fn
         self.downsample = downsample
 
+        # self.norm_111 = nn.BatchNorm2d(128, affine=False, track_running_stats=False)
+        # self.norm_222 = nn.BatchNorm2d(128, affine=False, track_running_stats=False)
+
         if self.norm_fn == 'group':
             self.norm1 = nn.GroupNorm(num_groups=8, num_channels=64)
 
@@ -338,10 +341,10 @@ class Feature(SubModule):
         self.block3 = torch.nn.Sequential(*model.blocks[layers[2]:layers[3]])
         self.block4 = torch.nn.Sequential(*model.blocks[layers[3]:layers[4]])
 
-        self.deconv32_16 = Conv2x(chans[4], chans[3], deconv=True, concat=True)
-        self.deconv16_8 = Conv2x(chans[3]*2, chans[2], deconv=True, concat=True)
-        self.deconv8_4 = Conv2x(chans[2]*2, chans[1], deconv=True, concat=True)
-        self.conv4 = BasicConv(chans[1]*2, chans[1]*2, kernel_size=3, stride=1, padding=1)
+        self.deconv32_16 = Conv2x_IN(chans[4], chans[3], deconv=True, concat=True)
+        self.deconv16_8 = Conv2x_IN(chans[3]*2, chans[2], deconv=True, concat=True)
+        self.deconv8_4 = Conv2x_IN(chans[2]*2, chans[1], deconv=True, concat=True)
+        self.conv4 = BasicConv_IN(chans[1]*2, chans[1]*2, kernel_size=3, stride=1, padding=1)
 
     def forward(self, x):
         x = self.act1(self.bn1(self.conv_stem(x)))

@@ -1,10 +1,10 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from core.update import BasicMultiUpdateBlock
-from core.extractor import MultiBasicEncoder, Feature
-from core.geometry import Combined_Geo_Encoding_Volume
-from core.submodule import *
+from igev_plusplus.core.update import BasicMultiUpdateBlock
+from igev_plusplus.core.extractor import MultiBasicEncoder, Feature
+from igev_plusplus.core.geometry import Combined_Geo_Encoding_Volume
+from igev_plusplus.core.submodule import *
 import time
 
 

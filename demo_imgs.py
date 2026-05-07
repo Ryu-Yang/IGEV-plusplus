@@ -1,20 +1,17 @@
-import sys
-sys.path.append('core')
-
 import argparse
 import glob
 import numpy as np
 import torch
 from tqdm import tqdm
 from pathlib import Path
-from core.igev_stereo import IGEVStereo
-from core.utils.utils import InputPadder
+from igev_plusplus.core.igev_stereo import IGEVStereo
+from igev_plusplus.core.utils.utils import InputPadder
 from PIL import Image
 from matplotlib import pyplot as plt
 import os
 import skimage.io
 import cv2
-from utils.frame_utils import readPFM
+
 
 
 DEVICE = 'cuda'

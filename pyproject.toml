@@ -3,7 +3,7 @@ requires = ["uv>=0.1.0", "setuptools>=61", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "IGEV-plusplus"
+name = "igev-plusplus"
 version = "0.0.1"
 description = ""
 readme = "README.md"
@@ -23,5 +23,5 @@ dependencies = [
 
 [tool.setuptools.packages.find]
 where = ["."]
-include = ["core*", "core_rt*"]
+include = ["igev_plusplus*"]
 exclude = []

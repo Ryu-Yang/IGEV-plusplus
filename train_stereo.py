@@ -11,9 +11,9 @@ from torch.utils.tensorboard import SummaryWriter
 import torch
 import torch.nn as nn
 import torch.optim as optim
-from core.igev_stereo import IGEVStereo
+from igev_plusplus.core.igev_stereo import IGEVStereo
 from evaluate_stereo import *
-import core.stereo_datasets as datasets
+import igev_plusplus.core.stereo_datasets as datasets
 import torch.nn.functional as F
 
 try:

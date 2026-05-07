@@ -1,10 +1,10 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from core_rt.update import BasicUpdateBlock
-from core_rt.extractor import Feature
-from core_rt.geometry import Geo_Encoding_Volume
-from core_rt.submodule import *
+from igev_plusplus.core_rt.update import BasicUpdateBlock
+from igev_plusplus.core_rt.extractor import Feature
+from igev_plusplus.core_rt.geometry import Geo_Encoding_Volume
+from igev_plusplus.core_rt.submodule import *
 
 
 try:

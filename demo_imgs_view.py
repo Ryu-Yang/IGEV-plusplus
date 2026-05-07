@@ -102,9 +102,9 @@ def demo(args):
 
             # ==================== 使用示例 ====================
             # 参数设置（人眼立体视觉模拟）
-            fx = 655.7244              # 焦距 [pixels]，典型手机/小相机值
+            fx = 673.0846              # 焦距 [pixels]，典型手机/小相机值
             baseline_mm = 60.12      # 人眼瞳距 ≈ 63mm [mm]
-            min_disp = 30.0
+            min_disp = 15.0
             max_disp = 400.0 
             # 假设 disp 是你的模型输出/立体匹配结果 [H, W, 1] 或 [H, W]
             # disp = model_output  # torch.Tensor 或 np.ndarray
